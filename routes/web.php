@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AprendizController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::redirect('/', '/aprendices');
+
+Route::resource('aprendices', AprendizController::class);
