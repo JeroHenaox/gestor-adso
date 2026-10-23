@@ -1,4 +1,3 @@
-
 @extends('layouts.app')
 
 @section('title', 'Aprendices | Gestor ADSO')
@@ -10,18 +9,91 @@
     </div>
 
     <div class="card">
-        <h2>Listado de aprendices</h2>
+        <div class="list-header">
+            <div>
+                <h2>Listado de aprendices</h2>
+                <p class="list-description">
+                    Consulta los registros guardados en la base de datos.
+                </p>
+            </div>
 
-        <p>
-            En esta versión inicial, el listado es temporal.
-            La conexión con la base de datos se implementará
-            en una etapa posterior.
-        </p>
-
-        <div class="actions">
             <a class="button" href="{{ route('aprendices.create') }}">
                 + Registrar aprendiz
             </a>
         </div>
+
+        <form action="{{ route('aprendices.index') }}" method="GET" class="search-form">
+            <input
+                type="search"
+                name="buscar"
+                value="{{ $buscar ?? '' }}"
+                placeholder="Buscar por nombre, documento o correo..."
+                aria-label="Buscar aprendices"
+            >
+
+            <button type="submit" class="button">Buscar</button>
+
+            @if (!empty($buscar))
+                <a class="button button-secondary" href="{{ route('aprendices.index') }}">
+                    Limpiar
+                </a>
+            @endif
+        </form>
+
+        @if (!empty($buscar))
+            <p class="search-results">
+                Resultados para <strong>{{ $buscar }}</strong>:
+                {{ $aprendices->total() }} encontrado(s).
+            </p>
+        @endif
+
+        @if ($aprendices->count() > 0)
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Documento</th>
+                            <th>Correo electrónico</th>
+                            <th>Ficha</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach ($aprendices as $aprendiz)
+                            <tr>
+                                <td>{{ $aprendiz->id }}</td>
+                                <td>{{ $aprendiz->nombre }}</td>
+                                <td>{{ $aprendiz->documento }}</td>
+                                <td>{{ $aprendiz->correo }}</td>
+                                <td>{{ $aprendiz->ficha_id ?? 'Sin ficha' }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination-container">
+                {{ $aprendices->links() }}
+            </div>
+        @else
+            <div class="empty-state">
+                <h3>No se encontraron aprendices</h3>
+                <p>
+                    @if (!empty($buscar))
+                        Prueba con otro nombre, documento o correo electrónico.
+                    @else
+                        Todavía no hay aprendices registrados.
+                    @endif
+                </p>
+
+                @if (!empty($buscar))
+                    <a class="button button-secondary" href="{{ route('aprendices.index') }}">
+                        Ver todos los aprendices
+                    </a>
+                @endif
+            </div>
+        @endif
     </div>
 @endsection
