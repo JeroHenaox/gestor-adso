@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Aprendiz;
+use App\Http\Requests\StoreUpdateAprendizRequest;
 use Illuminate\Http\Request;
 
 class AprendizController extends Controller
@@ -15,8 +16,7 @@ class AprendizController extends Controller
             ->when($buscar, function ($query, $buscar) {
                 $query->where(function ($consulta) use ($buscar) {
                     $consulta->where('nombre', 'like', "%{$buscar}%")
-                        ->orWhere('documento', 'like', "%{$buscar}%")
-                        ->orWhere('correo', 'like', "%{$buscar}%");
+                        ->orWhere('documento', 'like', "%{$buscar}%");
                 });
             })
             ->latest()
@@ -28,29 +28,14 @@ class AprendizController extends Controller
 
     public function create()
     {
-        return view('aprendices.create');
+        $aprendiz = new Aprendiz();
+
+        return view('aprendices.create', compact('aprendiz'));
     }
 
-    public function store(Request $request)
+    public function store(StoreUpdateAprendizRequest $request)
     {
-        $data = $request->validate([
-            'nombre' => ['required', 'string', 'max:120'],
-            'documento' => [
-                'required',
-                'string',
-                'max:40',
-                'unique:aprendices,documento',
-            ],
-            'correo' => [
-                'required',
-                'email',
-                'max:120',
-                'unique:aprendices,correo',
-            ],
-            'ficha_id' => ['nullable', 'integer'],
-        ]);
-
-        Aprendiz::create($data);
+        Aprendiz::create($request->validated());
 
         return redirect()
             ->route('aprendices.index')
@@ -62,18 +47,28 @@ class AprendizController extends Controller
         abort(404);
     }
 
-    public function edit($id)
+    public function edit(Aprendiz $aprendiz)
     {
-        abort(404);
+        return view('aprendices.edit', compact('aprendiz'));
     }
 
-    public function update(Request $request, $id)
-    {
-        abort(404);
+    public function update(
+        StoreUpdateAprendizRequest $request,
+        Aprendiz $aprendiz
+    ) {
+        $aprendiz->update($request->validated());
+
+        return redirect()
+            ->route('aprendices.index')
+            ->with('ok', 'Aprendiz actualizado correctamente.');
     }
 
-    public function destroy($id)
+    public function destroy(Aprendiz $aprendiz)
     {
-        abort(404);
+        $aprendiz->delete();
+
+        return redirect()
+            ->route('aprendices.index')
+            ->with('ok', 'Aprendiz eliminado correctamente.');
     }
 }

@@ -5,4 +5,5 @@ use App\Http\Controllers\AprendizController;
 
 Route::redirect('/', '/aprendices');
 
-Route::resource('aprendices', AprendizController::class);
+Route::resource('aprendices', AprendizController::class)
+    ->parameters(['aprendices' => 'aprendiz']);

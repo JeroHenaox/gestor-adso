@@ -27,7 +27,7 @@
                 type="search"
                 name="buscar"
                 value="{{ $buscar ?? '' }}"
-                placeholder="Buscar por nombre, documento o correo..."
+                placeholder="Buscar por nombre o documento..."
                 aria-label="Buscar aprendices"
             >
 
@@ -57,6 +57,7 @@
                             <th>Documento</th>
                             <th>Correo electrónico</th>
                             <th>Ficha</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
 
@@ -68,6 +69,29 @@
                                 <td>{{ $aprendiz->documento }}</td>
                                 <td>{{ $aprendiz->correo }}</td>
                                 <td>{{ $aprendiz->ficha_id ?? 'Sin ficha' }}</td>
+
+                                <td>
+                                    <a
+                                        class="button button-secondary"
+                                        href="{{ route('aprendices.edit', $aprendiz) }}"
+                                    >
+                                        Editar
+                                    </a>
+
+                                    <form
+                                        action="{{ route('aprendices.destroy', $aprendiz) }}"
+                                        method="POST"
+                                        style="display: inline;"
+                                        onsubmit="return confirm('¿Estás seguro de eliminar este aprendiz?');"
+                                    >
+                                        @csrf
+                                        @method('DELETE')
+
+                                        <button class="button" type="submit">
+                                            Eliminar
+                                        </button>
+                                    </form>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -82,7 +106,7 @@
                 <h3>No se encontraron aprendices</h3>
                 <p>
                     @if (!empty($buscar))
-                        Prueba con otro nombre, documento o correo electrónico.
+                        Prueba con otro nombre o documento.
                     @else
                         Todavía no hay aprendices registrados.
                     @endif
