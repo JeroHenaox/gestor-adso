@@ -47,25 +47,27 @@ class AprendizController extends Controller
         abort(404);
     }
 
-    public function edit(Aprendiz $aprendiz)
+    public function edit(Aprendiz $aprendice)
     {
+        $aprendiz = $aprendice;
+
         return view('aprendices.edit', compact('aprendiz'));
     }
 
     public function update(
         StoreUpdateAprendizRequest $request,
-        Aprendiz $aprendiz
+        Aprendiz $aprendice
     ) {
-        $aprendiz->update($request->validated());
+        $aprendice->update($request->validated());
 
         return redirect()
             ->route('aprendices.index')
             ->with('ok', 'Aprendiz actualizado correctamente.');
     }
 
-    public function destroy(Aprendiz $aprendiz)
+    public function destroy(Aprendiz $aprendice)
     {
-        $aprendiz->delete();
+        $aprendice->delete();
 
         return redirect()
             ->route('aprendices.index')

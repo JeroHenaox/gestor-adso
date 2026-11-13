@@ -14,10 +14,18 @@ class StoreUpdateAprendizRequest extends FormRequest
 
     public function rules(): array
     {
-        $id = $this->route('aprendiz')?->id;
+        $aprendiz = $this->route('aprendice');
+
+        $id = $aprendiz instanceof \App\Models\Aprendiz
+            ? $aprendiz->id
+            : $aprendiz;
 
         return [
-            'nombre' => ['required', 'string', 'max:120'],
+            'nombre' => [
+                'required',
+                'string',
+                'max:120',
+            ],
 
             'documento' => [
                 'required',
@@ -33,7 +41,10 @@ class StoreUpdateAprendizRequest extends FormRequest
                 Rule::unique('aprendices', 'correo')->ignore($id),
             ],
 
-            'ficha_id' => ['nullable', 'integer'],
+            'ficha_id' => [
+                'nullable',
+                'integer',
+            ],
         ];
     }
 

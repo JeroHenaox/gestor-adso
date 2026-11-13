@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Gestor ADSO')</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
         * {
@@ -53,6 +55,29 @@
         .top-nav a:hover {
             color: white;
         }
+
+        .session-nav {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            color: #dbeafe;
+            font-size: 14px;
+        }
+
+        .session-nav a { color: #dbeafe; text-decoration: none; }
+        .session-nav a:hover { color: white; }
+        .session-nav form { margin: 0; }
+        .logout-button {
+            background: transparent;
+            border: 1px solid #bfdbfe;
+            border-radius: 7px;
+            color: white;
+            padding: 7px 12px;
+            cursor: pointer;
+            font: inherit;
+        }
+        .logout-button:hover { background: #1e40af; }
 
         main {
             max-width: 1150px;
@@ -392,6 +417,21 @@
                 <a href="{{ route('aprendices.index') }}">Aprendices</a>
                 <a href="{{ route('aprendices.create') }}">Registrar aprendiz</a>
             </nav>
+
+            <div class="session-nav">
+                @auth
+                    <span>Hola, {{ auth()->user()->name }}</span>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="logout-button">Salir</button>
+                    </form>
+                @endauth
+
+                @guest
+                    <a href="{{ route('login') }}">Iniciar sesión</a>
+                    <a href="{{ route('register') }}">Registrarse</a>
+                @endguest
+            </div>
         </div>
     </header>
 
@@ -413,7 +453,14 @@
             </div>
         @endif
 
+        @isset($header)
+            <div class="page-heading">{{ $header }}</div>
+        @endisset
+
         @yield('content')
+        @isset($slot)
+            {{ $slot }}
+        @endisset
     </main>
 
     <footer>
